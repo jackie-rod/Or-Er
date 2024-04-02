@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Text Processor</title>
+    <link rel="stylesheet" href="style.css">
+    <script>
+        function processText() {
+            var text = document.getElementById('text').value;
+            var lines = text.split("\n");
+            var groups = [];
+            for (var i = 0; i < lines.length; i += 50) {
+                groups.push(lines.slice(i, i + 50).join(" or "));
+            }
+            var resultsDiv = document.getElementById('results');
+            resultsDiv.innerHTML = '';
+            for (var i = 0; i < groups.length; i++) {
+                var resultDiv = document.createElement('div');
+                var resultInput = document.createElement('input');
+                resultInput.type = 'text';
+                resultInput.value = groups[i];
+                resultInput.id = 'result' + i;
+                var copyButton = document.createElement('button');
+                copyButton.textContent = 'Copy';
+                // Use an IIFE to create a new scope for each iteration
+                (function(inputElement, buttonElement) {
+                    buttonElement.onclick = function() {
+                        inputElement.select();
+                        inputElement.setSelectionRange(0, 99999);
+                        document.execCommand("copy");
+                        this.textContent = 'Copied';
+                        this.style.backgroundColor = '#28a745';
+                        this.style.color = 'white';
+                    };
+                })(resultInput, copyButton);
+                resultDiv.appendChild(resultInput);
+                resultDiv.appendChild(copyButton);
+                resultsDiv.appendChild(resultDiv);
+            }
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <form onsubmit="event.preventDefault(); processText();">
+            <textarea id="text"></textarea>
+            <input type="submit" value="Process" class="button">
+        </form>
+        <div id="results"></div>
+    </div>
+</body>
+</html>
